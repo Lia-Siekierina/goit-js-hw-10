@@ -42,6 +42,8 @@ const options = {
   },
 };
 
+flatpickr("#datetime-picker", options);
+
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -65,3 +67,37 @@ function convertMs(ms) {
 console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
 console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
 console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+
+const addLeadingZero = value => value.toString().padStart(2, "0");
+
+btnStart.addEventListener('click', startTimer);
+
+function startTimer() {
+  btnStart.disabled = true;
+  input.disabled = true;
+
+  const animatedDiv = document.querySelector('#animatedDiv');
+  animatedDiv.classList.add('animated');
+
+  const timer = setInterval(() => {
+    const currentDate = new Date();
+    const targetDate = new Date(input.value);
+    const timeDiff = targetDate - currentDate;
+
+    const { days, hours, minutes, seconds } = convertMs(timeDiff);
+
+    day.textContent = addLeadingZero(days);
+    hour.textContent = addLeadingZero(hours);
+    minute.textContent = addLeadingZero(minutes);
+    second.textContent = addLeadingZero(seconds);
+
+    const isTimerFinished = [days, hours, minutes, seconds].every(value => value === 0);
+
+    if (isTimerFinished) {
+      clearInterval(timer);
+      input.disabled = false;
+
+      animatedDiv.classList.remove('animated');
+    }
+  }, 1000);
+}
